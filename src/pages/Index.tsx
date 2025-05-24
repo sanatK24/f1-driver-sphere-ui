@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -8,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import DriverCard from '@/components/DriverCard';
 import SearchResults from '@/components/SearchResults';
 import FeatureNavigation from '@/components/FeatureNavigation';
-import TracksSection from '@/components/TracksSection';
+import CircuitsSection from '@/components/CircuitsSection';
 import ResultsSection from '@/components/ResultsSection';
 import { searchDrivers } from '@/services/api';
 
@@ -106,74 +105,44 @@ const Index = () => {
               </CardContent>
             </Card>
 
-            {/* Results Section */}
-            <div className="mt-8">
-              {selectedDriver && (
+            {/* Search Results */}
+            {searchResults.length > 0 && (
+              <div className="mt-8">
+                <h2 className="text-2xl font-bold text-white mb-6 text-center">Search Results</h2>
+                <SearchResults 
+                  drivers={searchResults} 
+                  onSelectDriver={setSelectedDriver} 
+                />
+              </div>
+            )}
+
+            {/* Selected Driver Details */}
+            {selectedDriver && (
+              <div className="mt-12">
+                <h2 className="text-2xl font-bold text-white mb-6 text-center">Driver Details</h2>
                 <DriverCard 
                   driver={selectedDriver} 
-                  onBack={() => setSelectedDriver(null)}
+                  onBack={() => setSelectedDriver(null)} 
                 />
-              )}
-              
-              {searchResults.length > 1 && !selectedDriver && (
-                <SearchResults 
-                  drivers={searchResults}
-                  onSelectDriver={setSelectedDriver}
-                />
-              )}
-            </div>
-
-            {/* Instructions */}
-            {!selectedDriver && searchResults.length === 0 && !isLoading && (
-              <div className="mt-12 max-w-4xl mx-auto">
-                <Card className="bg-black/20 backdrop-blur-sm border-gray-700/50">
-                  <CardContent className="pt-6">
-                    <div className="text-center text-gray-300">
-                      <h3 className="text-xl font-semibold mb-4 text-white">Search for F1 Drivers</h3>
-                      <div className="flex flex-wrap justify-center gap-2 mb-4">
-                        {['Max', 'Hamilton', 'Leclerc', 'Piastri', 'Russell', 'Sainz'].map((name) => (
-                          <Badge 
-                            key={name}
-                            variant="outline" 
-                            className="cursor-pointer hover:bg-red-600/20 border-red-500/50 text-gray-300"
-                            onClick={() => {
-                              setSearchQuery(name);
-                            }}
-                          >
-                            {name}
-                          </Badge>
-                        ))}
-                      </div>
-                      <p className="text-sm text-gray-400">
-                        This app now connects to real F1 data via your Python backend using the OpenF1 API.
-                      </p>
-                      <p className="text-xs text-gray-500 mt-2">
-                        Backend server: <code className="bg-gray-800 px-1 rounded">python backend/app.py</code>
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
               </div>
             )}
           </>
         );
+
       case 'tracks':
-        return <TracksSection />;
+        return <CircuitsSection />;
+
       case 'results':
         return <ResultsSection />;
+
       case 'seasons':
         return (
-          <Card className="max-w-4xl mx-auto bg-black/40 backdrop-blur-sm border-red-500/20">
-            <CardHeader>
-              <CardTitle className="text-white text-center">Season Information</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center text-gray-300">
-                <p>Season data feature coming soon! This will include championship standings, race calendars, and historical data.</p>
-              </div>
-            </CardContent>
-          </Card>
+          <div className="text-center py-12">
+            <h2 className="text-2xl font-bold text-white mb-4">Seasons</h2>
+            <p className="text-gray-400">Coming soon...</p>
+          </div>
         );
+
       default:
         return null;
     }

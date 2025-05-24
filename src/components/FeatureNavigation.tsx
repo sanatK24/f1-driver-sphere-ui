@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { User, MapPin, Trophy, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -12,7 +11,7 @@ interface FeatureNavigationProps {
 const FeatureNavigation: React.FC<FeatureNavigationProps> = ({ activeFeature, onFeatureChange }) => {
   const features = [
     { id: 'drivers', label: 'Drivers', icon: User },
-    { id: 'tracks', label: 'Tracks', icon: MapPin },
+    { id: 'tracks', label: 'Circuits', icon: MapPin },
     { id: 'results', label: 'Results', icon: Trophy },
     { id: 'seasons', label: 'Seasons', icon: Calendar },
   ];
