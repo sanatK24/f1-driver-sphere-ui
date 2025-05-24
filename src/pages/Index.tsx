@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -111,7 +110,7 @@ const Index = () => {
         <div className="container mx-auto px-4 py-6">
           <div className="text-center">
             <h1 className="text-4xl md:text-6xl font-bold text-white mb-2">
-              F1-<span className="text-red-500">nalyzer</span>
+              F1-<span className="text-red-500">analyzer</span>
             </h1>
             <p className="text-gray-300 text-lg">
               Discover Formula 1 driver profiles and statistics
