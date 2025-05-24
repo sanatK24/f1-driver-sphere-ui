@@ -6,6 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import DriverCard from '@/components/DriverCard';
 import SearchResults from '@/components/SearchResults';
+import FeatureNavigation from '@/components/FeatureNavigation';
+import TracksSection from '@/components/TracksSection';
+import ResultsSection from '@/components/ResultsSection';
 
 interface Driver {
   driver_number: number;
@@ -18,6 +21,7 @@ interface Driver {
 }
 
 const Index = () => {
+  const [activeFeature, setActiveFeature] = useState('drivers');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDriver, setSelectedDriver] = useState<Driver | null>(null);
   const [searchResults, setSearchResults] = useState<Driver[]>([]);
@@ -103,6 +107,115 @@ const Index = () => {
     }
   };
 
+  const renderFeatureContent = () => {
+    switch (activeFeature) {
+      case 'drivers':
+        return (
+          <>
+            {/* Search Section */}
+            <Card className="max-w-2xl mx-auto bg-black/40 backdrop-blur-sm border-red-500/20">
+              <CardHeader>
+                <CardTitle className="text-white text-center">Search for F1 Drivers</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <div className="flex-1">
+                    <Input
+                      type="text"
+                      placeholder="Enter driver name (e.g., 'Max', 'Hamilton', 'Leclerc')"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      onKeyPress={handleKeyPress}
+                      className="bg-gray-800/50 border-gray-600 text-white placeholder-gray-400"
+                    />
+                  </div>
+                  <Button 
+                    onClick={handleSearch}
+                    disabled={isLoading}
+                    className="bg-red-600 hover:bg-red-700 text-white"
+                  >
+                    <Search className="mr-2 h-4 w-4" />
+                    {isLoading ? 'Searching...' : 'Search'}
+                  </Button>
+                </div>
+                {error && (
+                  <div className="mt-4 p-3 bg-red-900/50 border border-red-500/50 rounded-lg">
+                    <p className="text-red-200">{error}</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Results Section */}
+            <div className="mt-8">
+              {selectedDriver && (
+                <DriverCard 
+                  driver={selectedDriver} 
+                  onBack={() => setSelectedDriver(null)}
+                />
+              )}
+              
+              {searchResults.length > 1 && !selectedDriver && (
+                <SearchResults 
+                  drivers={searchResults}
+                  onSelectDriver={setSelectedDriver}
+                />
+              )}
+            </div>
+
+            {/* Demo Instructions */}
+            {!selectedDriver && searchResults.length === 0 && !isLoading && (
+              <div className="mt-12 max-w-4xl mx-auto">
+                <Card className="bg-black/20 backdrop-blur-sm border-gray-700/50">
+                  <CardContent className="pt-6">
+                    <div className="text-center text-gray-300">
+                      <h3 className="text-xl font-semibold mb-4 text-white">Try searching for:</h3>
+                      <div className="flex flex-wrap justify-center gap-2">
+                        {['Max', 'Hamilton', 'Leclerc', 'Piastri'].map((name) => (
+                          <Badge 
+                            key={name}
+                            variant="outline" 
+                            className="cursor-pointer hover:bg-red-600/20 border-red-500/50 text-gray-300"
+                            onClick={() => {
+                              setSearchQuery(name);
+                            }}
+                          >
+                            {name}
+                          </Badge>
+                        ))}
+                      </div>
+                      <p className="mt-4 text-sm text-gray-400">
+                        This demo uses mock data. Connect to your Python backend to fetch real F1 driver information.
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+          </>
+        );
+      case 'tracks':
+        return <TracksSection />;
+      case 'results':
+        return <ResultsSection />;
+      case 'seasons':
+        return (
+          <Card className="max-w-4xl mx-auto bg-black/40 backdrop-blur-sm border-red-500/20">
+            <CardHeader>
+              <CardTitle className="text-white text-center">Season Information</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center text-gray-300">
+                <p>Season data feature coming soon! This will include championship standings, race calendars, and historical data.</p>
+              </div>
+            </CardContent>
+          </Card>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-red-900">
       {/* Header */}
@@ -113,94 +226,20 @@ const Index = () => {
               F1-<span className="text-red-500">analyzer</span>
             </h1>
             <p className="text-gray-300 text-lg">
-              Discover Formula 1 driver profiles and statistics
+              Comprehensive Formula 1 analysis and information platform
             </p>
           </div>
         </div>
       </div>
 
-      {/* Search Section */}
+      {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
-        <Card className="max-w-2xl mx-auto bg-black/40 backdrop-blur-sm border-red-500/20">
-          <CardHeader>
-            <CardTitle className="text-white text-center">Search for F1 Drivers</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex-1">
-                <Input
-                  type="text"
-                  placeholder="Enter driver name (e.g., 'Max', 'Hamilton', 'Leclerc')"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  className="bg-gray-800/50 border-gray-600 text-white placeholder-gray-400"
-                />
-              </div>
-              <Button 
-                onClick={handleSearch}
-                disabled={isLoading}
-                className="bg-red-600 hover:bg-red-700 text-white"
-              >
-                <Search className="mr-2 h-4 w-4" />
-                {isLoading ? 'Searching...' : 'Search'}
-              </Button>
-            </div>
-            {error && (
-              <div className="mt-4 p-3 bg-red-900/50 border border-red-500/50 rounded-lg">
-                <p className="text-red-200">{error}</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Results Section */}
-        <div className="mt-8">
-          {selectedDriver && (
-            <DriverCard 
-              driver={selectedDriver} 
-              onBack={() => setSelectedDriver(null)}
-            />
-          )}
-          
-          {searchResults.length > 1 && !selectedDriver && (
-            <SearchResults 
-              drivers={searchResults}
-              onSelectDriver={setSelectedDriver}
-            />
-          )}
-        </div>
-
-        {/* Demo Instructions */}
-        {!selectedDriver && searchResults.length === 0 && !isLoading && (
-          <div className="mt-12 max-w-4xl mx-auto">
-            <Card className="bg-black/20 backdrop-blur-sm border-gray-700/50">
-              <CardContent className="pt-6">
-                <div className="text-center text-gray-300">
-                  <h3 className="text-xl font-semibold mb-4 text-white">Try searching for:</h3>
-                  <div className="flex flex-wrap justify-center gap-2">
-                    {['Max', 'Hamilton', 'Leclerc', 'Piastri'].map((name) => (
-                      <Badge 
-                        key={name}
-                        variant="outline" 
-                        className="cursor-pointer hover:bg-red-600/20 border-red-500/50 text-gray-300"
-                        onClick={() => {
-                          setSearchQuery(name);
-                          setSearchQuery(name);
-                        }}
-                      >
-                        {name}
-                      </Badge>
-                    ))}
-                  </div>
-                  <p className="mt-4 text-sm text-gray-400">
-                    This demo uses mock data. Connect to your Python backend to fetch real F1 driver information.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        )}
+        <FeatureNavigation 
+          activeFeature={activeFeature}
+          onFeatureChange={setActiveFeature}
+        />
+        
+        {renderFeatureContent()}
       </div>
     </div>
   );
