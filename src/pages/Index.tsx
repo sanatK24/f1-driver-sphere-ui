@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -9,6 +10,7 @@ import SearchResults from '@/components/SearchResults';
 import FeatureNavigation from '@/components/FeatureNavigation';
 import TracksSection from '@/components/TracksSection';
 import ResultsSection from '@/components/ResultsSection';
+import { searchDrivers } from '@/services/api';
 
 interface Driver {
   driver_number: number;
@@ -28,46 +30,6 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // Mock data for demonstration (replace with actual API call)
-  const mockDrivers: Driver[] = [
-    {
-      driver_number: 1,
-      first_name: "Max",
-      last_name: "Verstappen",
-      team_name: "Red Bull Racing",
-      team_colour: "#3671C6",
-      country_code: "NLD",
-      headshot_url: "https://www.formula1.com/content/dam/fom-website/drivers/M/MAXVER01_Max_Verstappen/maxver01.png.transform/1col/image.png"
-    },
-    {
-      driver_number: 44,
-      first_name: "Lewis",
-      last_name: "Hamilton",
-      team_name: "Mercedes",
-      team_colour: "#27F4D2",
-      country_code: "GBR",
-      headshot_url: "https://www.formula1.com/content/dam/fom-website/drivers/L/LEWHAM01_Lewis_Hamilton/lewham01.png.transform/1col/image.png"
-    },
-    {
-      driver_number: 16,
-      first_name: "Charles",
-      last_name: "Leclerc",
-      team_name: "Ferrari",
-      team_colour: "#E8002D",
-      country_code: "MON",
-      headshot_url: "https://www.formula1.com/content/dam/fom-website/drivers/C/CHALEC01_Charles_Leclerc/chalec01.png.transform/1col/image.png"
-    },
-    {
-      driver_number: 81,
-      first_name: "Oscar",
-      last_name: "Piastri",
-      team_name: "McLaren",
-      team_colour: "#FF8000",
-      country_code: "AUS",
-      headshot_url: "https://www.formula1.com/content/dam/fom-website/drivers/O/OSCPIA01_Oscar_Piastri/oscpia01.png.transform/1col/image.png"
-    }
-  ];
-
   const handleSearch = async () => {
     if (!searchQuery.trim()) {
       setError('Please enter a driver name');
@@ -78,15 +40,7 @@ const Index = () => {
     setError('');
     
     try {
-      // Simulate API call with mock data
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      const results = mockDrivers.filter(driver => 
-        driver.first_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        driver.last_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        `${driver.first_name} ${driver.last_name}`.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-      
+      const results = await searchDrivers(searchQuery);
       setSearchResults(results);
       
       if (results.length === 0) {
@@ -95,7 +49,8 @@ const Index = () => {
         setSelectedDriver(results[0]);
       }
     } catch (err) {
-      setError('Error searching for drivers');
+      setError('Error connecting to F1 API. Please check if the backend server is running.');
+      console.error('Search error:', err);
     } finally {
       setIsLoading(false);
     }
@@ -141,6 +96,11 @@ const Index = () => {
                 {error && (
                   <div className="mt-4 p-3 bg-red-900/50 border border-red-500/50 rounded-lg">
                     <p className="text-red-200">{error}</p>
+                    {error.includes('backend server') && (
+                      <p className="text-red-300 text-sm mt-2">
+                        Make sure to run: <code className="bg-gray-800 px-1 rounded">python backend/app.py</code>
+                      </p>
+                    )}
                   </div>
                 )}
               </CardContent>
@@ -163,15 +123,15 @@ const Index = () => {
               )}
             </div>
 
-            {/* Demo Instructions */}
+            {/* Instructions */}
             {!selectedDriver && searchResults.length === 0 && !isLoading && (
               <div className="mt-12 max-w-4xl mx-auto">
                 <Card className="bg-black/20 backdrop-blur-sm border-gray-700/50">
                   <CardContent className="pt-6">
                     <div className="text-center text-gray-300">
-                      <h3 className="text-xl font-semibold mb-4 text-white">Try searching for:</h3>
-                      <div className="flex flex-wrap justify-center gap-2">
-                        {['Max', 'Hamilton', 'Leclerc', 'Piastri'].map((name) => (
+                      <h3 className="text-xl font-semibold mb-4 text-white">Search for F1 Drivers</h3>
+                      <div className="flex flex-wrap justify-center gap-2 mb-4">
+                        {['Max', 'Hamilton', 'Leclerc', 'Piastri', 'Russell', 'Sainz'].map((name) => (
                           <Badge 
                             key={name}
                             variant="outline" 
@@ -184,8 +144,11 @@ const Index = () => {
                           </Badge>
                         ))}
                       </div>
-                      <p className="mt-4 text-sm text-gray-400">
-                        This demo uses mock data. Connect to your Python backend to fetch real F1 driver information.
+                      <p className="text-sm text-gray-400">
+                        This app now connects to real F1 data via your Python backend using the OpenF1 API.
+                      </p>
+                      <p className="text-xs text-gray-500 mt-2">
+                        Backend server: <code className="bg-gray-800 px-1 rounded">python backend/app.py</code>
                       </p>
                     </div>
                   </CardContent>
