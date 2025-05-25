@@ -1,73 +1,81 @@
-# Welcome to your Lovable project
+# F1 Driver Analyzer
 
-## Project info
+#### Video Demo: https://www.youtube.com/watch?v=HKEPpvxaHUQ
 
-**URL**: https://lovable.dev/projects/e3d14fd4-c299-475f-b7d7-aa2b60d0690a
+#### Description:
 
-## How can I edit this code?
+The F1 Driver Analyzer is a Python application that provides comprehensive information about Formula 1 drivers. This tool allows users to search for drivers by name and view detailed information. The application is built with a focus on simplicity and user-friendliness, making it easy for F1 enthusiasts to get quick access to driver information.
 
-There are several ways of editing your application.
+## Project Structure
 
-**Use Lovable**
+### Files
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/e3d14fd4-c299-475f-b7d7-aa2b60d0690a) and start prompting.
+- `project.py`: The main application file containing the core functionality
+  - Implements the `F1DriverAPI` class for making API requests to the OpenF1 API
+  - Defines the `Driver` data class for storing driver information
+  - Contains methods for fetching driver data
+  - Handles HTML generation for displaying driver information
 
-Changes made via Lovable will be committed automatically to this repo.
+- `test_project.py`: Unit tests for the application
+  - Tests the `search_drivers_by_name` functionality
+  - Verifies error handling and edge cases
+  - Ensures the application works as expected
 
-**Use your preferred IDE**
+- `requirements.txt`: Lists the required Python packages
+  - `requests`: For making HTTP requests to the F1 API
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Key Features
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+   **Driver Search**
+   - Search for drivers by first or last name (case-insensitive)
+   - Displays driver information including:
+     - Driver number
+     - First and last name
+     - Team name and color
+     - Nationality
+     - Headshot URL
 
-Follow these steps:
+## Design Decisions
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### API Integration
+- Chose to use the OpenF1 API for real-time data
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+### Data Structure
+- Used Python's dataclasses for clean and maintainable data models
+- Implemented proper type hints for better code clarity
+- Created a modular API client class for easy extension
 
-# Step 3: Install the necessary dependencies.
-npm i
+### User Interface
+- Decided to use HTML for displaying results for better formatting
+- Implemented a simple yet effective menu system
+- Added proper error handling for file operations
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+## Usage
 
-**Edit a file directly in GitHub**
+1. Run the application:
+   ```bash
+   python project.py
+   ```
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+2. Use the menu to:
+   - Search for drivers by name
+   - Exit the program
 
-**Use GitHub Codespaces**
+3. View results in your default web browser
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Requirements
 
-## What technologies are used for this project?
+- Python 3.8+
+- requests package (installed via requirements.txt)
 
-This project is built with:
+## Testing
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+The project includes comprehensive unit tests that verify:
+- Driver search functionality
+- Error handling
+- API response parsing
+- Data structure integrity
 
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/e3d14fd4-c299-475f-b7d7-aa2b60d0690a) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+To run tests:
+```bash
+pytest test_project.py
